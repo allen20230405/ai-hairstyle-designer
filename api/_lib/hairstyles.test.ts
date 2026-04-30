@@ -15,5 +15,7 @@ describe("buildHairstylePrompts", () => {
       styleId: "female-oval-001"
     });
     expect(prompts.every((prompt) => prompt.prompt.includes("https://example.com/face.jpg"))).toBe(true);
+    expect(prompts[0].prompt).toContain("保持原图人物100%的面部特征");
+    expect(prompts[0].prompt).toContain("只改变发型为空气感锁骨发");
   });
 });

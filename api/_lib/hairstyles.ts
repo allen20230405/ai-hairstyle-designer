@@ -36,10 +36,10 @@ export function buildHairstylePrompts(request: GenerateHairstylesRequest): Hairs
     advice: style.advice,
     prompt: [
       `参考用户头像图片：${request.imageUrl}`,
-      `为${faceLabel}${request.gender === "female" ? "女性" : "男性"}设计发型效果图。`,
-      `目标发型：${style.visual}。`,
-      "保持用户五官、脸型、肤色和身份一致，只替换/调整发型。",
-      "真实手机人像摄影质感，美发沙龙光线，干净背景，自然发丝细节。",
+      `参考图人物，保持原图人物100%的面部特征：五官、脸型、眼耳鼻嘴、下巴轮廓、肤色完全不变。只改变发型为${style.name}。正面人像照，正脸直视镜头，高清质感，自然真实。`,
+      `发型细节：${style.visual}。`,
+      `脸型参考：${faceLabel}，性别参考：${request.gender === "female" ? "女性" : "男性"}。`,
+      "不要改变人物身份、年龄、表情、妆容、脸部比例和身体姿态。",
       "避免夸张变脸、避免卡通风、避免文字水印覆盖人脸。"
     ].join("\n")
   }));
