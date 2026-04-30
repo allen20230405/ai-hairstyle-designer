@@ -1,6 +1,6 @@
 import { createArkClient } from "../_lib/ark";
 import { buildHairstylePrompts } from "../_lib/hairstyles";
-import { json, jsonError, mapErrorCode, messageForErrorCode } from "../_lib/http";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http";
 import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes";
 
@@ -51,6 +51,9 @@ export default async function handler(request: VercelRequestLike, response: Verc
         extra_body: {
           watermark: true
         }
+      }).catch((error) => {
+        logApiError("generate-hairstyles.ark-images", error);
+        throw new Error("ARK_API_ERROR");
       });
       const imageUrl = imageResponse.data?.[0]?.url;
 
@@ -68,6 +71,7 @@ export default async function handler(request: VercelRequestLike, response: Verc
 
     json(response, 200, { results });
   } catch (error) {
+    logApiError("generate-hairstyles", error);
     const code = mapErrorCode(error);
     jsonError(response, 500, code, messageForErrorCode(code));
   }

@@ -2,7 +2,7 @@ import { put } from "@vercel/blob";
 import formidable from "formidable";
 import { readFile } from "node:fs/promises";
 
-import { json, jsonError, mapErrorCode, messageForErrorCode } from "../_lib/http";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http";
 import { requireBlobToken } from "../_lib/env";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes";
 
@@ -69,6 +69,9 @@ export default async function handler(request: VercelRequestLike, response: Verc
       access: "public",
       contentType: image.mimetype,
       token
+    }).catch((error) => {
+      logApiError("upload-image.blob-put", error);
+      throw new Error("BLOB_UPLOAD_ERROR");
     });
 
     json(response, 200, {
@@ -76,6 +79,7 @@ export default async function handler(request: VercelRequestLike, response: Verc
       imageUrl: blob.url
     });
   } catch (error) {
+    logApiError("upload-image", error);
     const code = mapErrorCode(error);
     jsonError(response, 500, code, messageForErrorCode(code));
   }

@@ -1,6 +1,6 @@
 import { createArkClient } from "../_lib/ark";
 import { FACE_ANALYSIS_PROMPT, parseFaceAnalysis } from "../_lib/face";
-import { json, jsonError, mapErrorCode, messageForErrorCode } from "../_lib/http";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes";
 
 export default async function handler(request: VercelRequestLike, response: VercelResponseLike) {
@@ -38,6 +38,9 @@ export default async function handler(request: VercelRequestLike, response: Verc
           ]
         }
       ]
+    }).catch((error) => {
+      logApiError("analyze-face.ark-chat", error);
+      throw new Error("ARK_API_ERROR");
     });
 
     const content = completion.choices[0]?.message?.content;
@@ -45,6 +48,7 @@ export default async function handler(request: VercelRequestLike, response: Verc
 
     json(response, 200, parseFaceAnalysis(text));
   } catch (error) {
+    logApiError("analyze-face", error);
     const code = mapErrorCode(error);
     jsonError(response, 500, code, messageForErrorCode(code));
   }

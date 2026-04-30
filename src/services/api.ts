@@ -1,10 +1,11 @@
 import type { AnalyzeFaceRequest, GenerateHairstylesRequest } from "../types/api";
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
-  const body = (await response.json().catch(() => ({}))) as { message?: string };
+  const body = (await response.json().catch(() => ({}))) as { code?: string; message?: string };
 
   if (!response.ok) {
-    throw new Error(body.message || "服务暂时不可用，请稍后重试。");
+    const suffix = body.code ? `（${body.code}）` : "";
+    throw new Error(`${body.message || "服务暂时不可用，请稍后重试。"}${suffix}`);
   }
 
   return body as T;
