@@ -7,6 +7,7 @@ export type ArkConfig = {
 
 export function readArkConfig(env: NodeJS.ProcessEnv = process.env): ArkConfig {
   const apiKey = env.ARK_API_KEY;
+  const configuredVisionModel = env.ARK_VISION_MODEL || "doubao-seed-2-0-lite-260215";
 
   if (!apiKey) {
     throw new Error("MISSING_ARK_API_KEY");
@@ -15,7 +16,10 @@ export function readArkConfig(env: NodeJS.ProcessEnv = process.env): ArkConfig {
   return {
     apiKey,
     baseURL: env.ARK_BASE_URL || "https://ark.cn-beijing.volces.com/api/v3",
-    visionModel: env.ARK_VISION_MODEL || "doubao-1.5-vision-pro-250328",
+    visionModel:
+      configuredVisionModel === "doubao-1.5-vision-pro-250328"
+        ? "doubao-seed-2-0-lite-260215"
+        : configuredVisionModel,
     imageModel: env.ARK_IMAGE_MODEL || "doubao-seedream-4-5-251128"
   };
 }

@@ -45,7 +45,7 @@ docs/
 ```env
 ARK_API_KEY=你的火山方舟 API Key
 ARK_BASE_URL=https://ark.cn-beijing.volces.com/api/v3
-ARK_VISION_MODEL=doubao-1.5-vision-pro-250328
+ARK_VISION_MODEL=doubao-seed-2-0-lite-260215
 ARK_IMAGE_MODEL=doubao-seedream-4-5-251128
 BLOB_READ_WRITE_TOKEN=你的 Vercel Blob Token
 ```

@@ -21,20 +21,19 @@ export default async function handler(request: VercelRequestLike, response: Verc
 
   try {
     const { client, visionModel } = createArkClient();
-    const completion = await client.chat.completions.create({
+    const completion = await client.responses.create({
       model: visionModel,
-      messages: [
+      input: [
         {
           role: "user",
           content: [
             {
-              type: "image_url",
-              image_url: {
-                url: imageUrl
-              }
+              type: "input_image",
+              image_url: imageUrl,
+              detail: "auto"
             },
             {
-              type: "text",
+              type: "input_text",
               text: FACE_ANALYSIS_PROMPT
             }
           ]
@@ -46,8 +45,7 @@ export default async function handler(request: VercelRequestLike, response: Verc
       throw new Error("ARK_API_ERROR");
     });
 
-    const content = completion.choices[0]?.message?.content;
-    const text = typeof content === "string" ? content : JSON.stringify(content ?? "");
+    const text = completion.output_text || JSON.stringify(completion.output ?? "");
 
     json(response, 200, parseFaceAnalysis(text));
   } catch (error) {
