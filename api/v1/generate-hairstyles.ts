@@ -46,13 +46,13 @@ export default async function handler(request: VercelRequestLike, response: Verc
       const imageResponse = await client.images.generate({
         model: imageModel,
         prompt: prompt.prompt,
-        size: "2K",
+        size: "2K" as unknown as "1024x1024",
         response_format: "url",
         extra_body: {
           watermark: true
         }
       });
-      const imageUrl = imageResponse.data[0]?.url;
+      const imageUrl = imageResponse.data?.[0]?.url;
 
       if (!imageUrl) {
         throw new Error("ARK_RESPONSE_PARSE_ERROR");
