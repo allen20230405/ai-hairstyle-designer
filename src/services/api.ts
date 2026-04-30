@@ -2,12 +2,13 @@ import type { AnalyzeFaceRequest, GenerateHairstylesRequest } from "../types/api
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
   const rawBody = await response.text().catch(() => "");
-  const body = (rawBody ? safeParseJson(rawBody) : {}) as { code?: string; message?: string };
+  const body = (rawBody ? safeParseJson(rawBody) : {}) as { code?: string; detail?: string; message?: string };
 
   if (!response.ok) {
     const suffix = body.code ? `（${body.code}）` : "";
+    const detail = body.detail ? `\n${body.detail}` : "";
     const fallback = `接口请求失败：${response.url || "未知接口"}（HTTP ${response.status}）`;
-    throw new Error(`${body.message || fallback}${suffix}`);
+    throw new Error(`${body.message || fallback}${suffix}${detail}`);
   }
 
   return body as T;

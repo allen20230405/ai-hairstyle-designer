@@ -14,12 +14,31 @@ export function json(response: VercelResponseLike, statusCode: number, body: unk
   response.status(statusCode).json(body);
 }
 
-export function jsonError(response: VercelResponseLike, statusCode: number, code: ApiErrorCode, message: string) {
+export function jsonError(
+  response: VercelResponseLike,
+  statusCode: number,
+  code: ApiErrorCode,
+  message: string,
+  detail?: string
+) {
   json(response, statusCode, {
     status: "error",
     code,
-    message
+    message,
+    ...(detail ? { detail } : {})
   });
+}
+
+export function safeErrorDetail(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return String(error).slice(0, 500);
+  }
+
+  const maybeStatus = "status" in error ? `status=${String(error.status)} ` : "";
+  const maybeCode = "code" in error ? `code=${String(error.code)} ` : "";
+  const maybeType = "type" in error ? `type=${String(error.type)} ` : "";
+
+  return `${maybeStatus}${maybeCode}${maybeType}${error.message}`.trim().slice(0, 500);
 }
 
 export function logApiError(scope: string, error: unknown) {

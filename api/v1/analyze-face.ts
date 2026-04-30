@@ -1,6 +1,6 @@
 import { createArkClient } from "../_lib/ark.js";
 import { FACE_ANALYSIS_PROMPT, parseFaceAnalysis } from "../_lib/face.js";
-import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode, safeErrorDetail } from "../_lib/http.js";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
 
 export default async function handler(request: VercelRequestLike, response: VercelResponseLike) {
@@ -16,6 +16,8 @@ export default async function handler(request: VercelRequestLike, response: Verc
     jsonError(response, 400, "BAD_REQUEST", "缺少 imageUrl。");
     return;
   }
+
+  let arkErrorDetail = "";
 
   try {
     const { client, visionModel } = createArkClient();
@@ -39,6 +41,7 @@ export default async function handler(request: VercelRequestLike, response: Verc
         }
       ]
     }).catch((error) => {
+      arkErrorDetail = safeErrorDetail(error);
       logApiError("analyze-face.ark-chat", error);
       throw new Error("ARK_API_ERROR");
     });
@@ -50,6 +53,6 @@ export default async function handler(request: VercelRequestLike, response: Verc
   } catch (error) {
     logApiError("analyze-face", error);
     const code = mapErrorCode(error);
-    jsonError(response, 500, code, messageForErrorCode(code));
+    jsonError(response, 500, code, messageForErrorCode(code), code === "ARK_API_ERROR" ? arkErrorDetail : undefined);
   }
 }
