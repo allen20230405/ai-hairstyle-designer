@@ -2,9 +2,9 @@ import { put } from "@vercel/blob";
 import formidable from "formidable";
 import { readFile } from "node:fs/promises";
 
-import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http";
-import { requireBlobToken } from "../_lib/env";
-import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
+import { requireBlobToken } from "../_lib/env.js";
+import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
 
 export const config = {
   api: {

@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 
-import { readArkConfig } from "./env";
+import { readArkConfig } from "./env.js";
 
 export function createArkClient(env: NodeJS.ProcessEnv = process.env): { client: OpenAI; visionModel: string; imageModel: string } {
   const config = readArkConfig(env);

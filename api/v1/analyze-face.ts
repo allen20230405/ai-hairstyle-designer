@@ -1,7 +1,7 @@
-import { createArkClient } from "../_lib/ark";
-import { FACE_ANALYSIS_PROMPT, parseFaceAnalysis } from "../_lib/face";
-import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http";
-import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes";
+import { createArkClient } from "../_lib/ark.js";
+import { FACE_ANALYSIS_PROMPT, parseFaceAnalysis } from "../_lib/face.js";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
+import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
 
 export default async function handler(request: VercelRequestLike, response: VercelResponseLike) {
   if (request.method !== "POST") {

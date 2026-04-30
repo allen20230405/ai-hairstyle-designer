@@ -1,8 +1,8 @@
-import { createArkClient } from "../_lib/ark";
-import { buildHairstylePrompts } from "../_lib/hairstyles";
-import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http";
-import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api";
-import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes";
+import { createArkClient } from "../_lib/ark.js";
+import { buildHairstylePrompts } from "../_lib/hairstyles.js";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
+import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api.js";
+import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
 
 const FACE_TYPES: FaceType[] = ["oval", "round", "square", "long", "heart", "pear", "diamond"];
 const GENDERS: Gender[] = ["male", "female"];

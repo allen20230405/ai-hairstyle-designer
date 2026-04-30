@@ -1,4 +1,4 @@
-import type { VercelResponseLike } from "./vercelTypes";
+import type { VercelResponseLike } from "./vercelTypes.js";
 
 export type ApiErrorCode =
   | "BAD_REQUEST"

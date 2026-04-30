@@ -1,4 +1,4 @@
-import type { AnalyzeFaceResponse, FaceType } from "../../src/types/api";
+import type { AnalyzeFaceResponse, FaceType } from "../../src/types/api.js";
 
 const SUPPORTED_FACE_TYPES: FaceType[] = ["oval", "round", "square", "long", "heart", "pear", "diamond"];
 

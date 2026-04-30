@@ -1,14 +1,24 @@
 import type { AnalyzeFaceRequest, GenerateHairstylesRequest } from "../types/api";
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
-  const body = (await response.json().catch(() => ({}))) as { code?: string; message?: string };
+  const rawBody = await response.text().catch(() => "");
+  const body = (rawBody ? safeParseJson(rawBody) : {}) as { code?: string; message?: string };
 
   if (!response.ok) {
     const suffix = body.code ? `（${body.code}）` : "";
-    throw new Error(`${body.message || "服务暂时不可用，请稍后重试。"}${suffix}`);
+    const fallback = `接口请求失败：${response.url || "未知接口"}（HTTP ${response.status}）`;
+    throw new Error(`${body.message || fallback}${suffix}`);
   }
 
   return body as T;
+}
+
+function safeParseJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
 }
 
 export async function uploadImage(image: File) {

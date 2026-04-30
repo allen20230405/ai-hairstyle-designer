@@ -1,4 +1,4 @@
-import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api";
+import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api.js";
 
 type HairstylePrompt = Omit<HairstyleResult, "imageUrl"> & {
   prompt: string;
