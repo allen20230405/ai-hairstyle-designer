@@ -1,0 +1,31 @@
+export type ArkConfig = {
+  apiKey: string;
+  baseURL: string;
+  visionModel: string;
+  imageModel: string;
+};
+
+export function readArkConfig(env: NodeJS.ProcessEnv = process.env): ArkConfig {
+  const apiKey = env.ARK_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("MISSING_ARK_API_KEY");
+  }
+
+  return {
+    apiKey,
+    baseURL: env.ARK_BASE_URL || "https://ark.cn-beijing.volces.com/api/v3",
+    visionModel: env.ARK_VISION_MODEL || "doubao-1.5-vision-pro-250328",
+    imageModel: env.ARK_IMAGE_MODEL || "doubao-seedream-4-5-251128"
+  };
+}
+
+export function requireBlobToken(env: NodeJS.ProcessEnv = process.env): string {
+  const token = env.BLOB_READ_WRITE_TOKEN;
+
+  if (!token) {
+    throw new Error("MISSING_BLOB_TOKEN");
+  }
+
+  return token;
+}

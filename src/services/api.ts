@@ -1,15 +1,43 @@
 import type { AnalyzeFaceRequest, GenerateHairstylesRequest } from "../types/api";
 
-import { analyzeFaceMock, generateHairstylesMock, uploadImageMock } from "./mockApi";
+async function parseJsonResponse<T>(response: Response): Promise<T> {
+  const body = (await response.json().catch(() => ({}))) as { message?: string };
 
-export function uploadImage(image: File) {
-  return uploadImageMock(image);
+  if (!response.ok) {
+    throw new Error(body.message || "服务暂时不可用，请稍后重试。");
+  }
+
+  return body as T;
 }
 
-export function analyzeFace(request: AnalyzeFaceRequest) {
-  return analyzeFaceMock(request);
+export async function uploadImage(image: File) {
+  const formData = new FormData();
+  formData.append("image", image);
+
+  const response = await fetch("/api/v1/upload-image", {
+    method: "POST",
+    body: formData
+  });
+
+  return parseJsonResponse<Awaited<ReturnType<typeof import("./mockApi").uploadImageMock>>>(response);
 }
 
-export function generateHairstyles(request: GenerateHairstylesRequest) {
-  return generateHairstylesMock(request);
+export async function analyzeFace(request: AnalyzeFaceRequest) {
+  const response = await fetch("/api/v1/analyze-face", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request)
+  });
+
+  return parseJsonResponse<Awaited<ReturnType<typeof import("./mockApi").analyzeFaceMock>>>(response);
+}
+
+export async function generateHairstyles(request: GenerateHairstylesRequest) {
+  const response = await fetch("/api/v1/generate-hairstyles", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request)
+  });
+
+  return parseJsonResponse<Awaited<ReturnType<typeof import("./mockApi").generateHairstylesMock>>>(response);
 }
