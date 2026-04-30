@@ -1,152 +1,156 @@
-# AI Hairstyle Designer MVP Design
+# AI 发型设计师 MVP 设计文档
 
-Date: 2026-04-30
+日期：2026-04-30
 
-## Scope
+## 范围
 
-Build a mobile-first single-page web app for "AI 发型设计师". The first version is a demonstrable MVP, not a production AI integration. It must deliver the complete user flow from photo upload to analysis progress to three generated hairstyle results, while keeping the API service boundary compatible with the future REST contract.
+构建一个手机端优先的单页网页应用，用于演示“AI 发型设计师”的完整核心流程。首版是可演示 MVP，不接入真实 AI 生产模型，但必须完整覆盖从照片上传、分析进度到展示 3 张发型结果图的用户体验，并保留与未来 REST API 契约一致的服务边界。
 
-Remote Git hosting is out of scope for this phase. The project will be initialized and committed locally; a remote can be added later when a repository URL is available.
+本阶段不做远程 Git 托管。项目会先在本地初始化 git 并提交；后续拿到远程仓库 URL 后再添加远程并推送。
 
-## Chosen Approach
+## 选定方案
 
-Use Vite, React, and TypeScript for a static SPA with a mock API layer.
+使用 Vite、React、TypeScript 构建静态 SPA，并通过 mock API 层模拟后端与 AI 响应。
 
-This approach is preferred because it delivers the mobile product experience quickly, avoids blocking on model credentials or image storage, and leaves a clean replacement point for Vercel API Routes or a real REST backend later.
+选择该方案的原因：
 
-Rejected alternatives:
+- 能最快交付可运行、可演示的手机端产品体验。
+- 不阻塞于豆包模型密钥、图片公开存储、Vercel 后端配置等生产依赖。
+- 页面只依赖统一 API facade，后续替换成 Vercel API Routes 或真实 REST 后端时，主要改服务层，不重写页面流程。
 
-- Next.js full-stack MVP: closer to production Vercel routing, but heavier for a mock-first demo.
-- Pure HTML/CSS/JS prototype: fast visually, but weaker for typed API contracts, tests, and later backend replacement.
+未采用方案：
 
-## Architecture
+- Next.js 全栈 MVP：更接近 Vercel 生产形态，但对 mock-first 演示来说项目更重。
+- 纯 HTML/CSS/JS 原型：视觉实现快，但类型契约、测试、后续后端替换都更弱。
 
-The app has three routes:
+## 架构
 
-- `/`: upload photo, choose gender, preview image, start analysis.
-- `/analysis`: show staged progress while mock upload, face analysis, and hairstyle generation run.
-- `/result`: show face type, confidence, three hairstyle results, and save controls.
+应用包含 3 个路由：
 
-Key modules:
+- `/`：上传照片、选择性别、预览图片、开始分析。
+- `/analysis`：展示上传、脸型分析、发型生成的分阶段进度。
+- `/result`：展示脸型、可信度、3 张发型结果图和保存按钮。
 
-- `src/services/api.ts`: public API facade used by pages. Exposes `uploadImage`, `analyzeFace`, and `generateHairstyles`.
-- `src/services/mockApi.ts`: mock implementation with realistic delays, progress-friendly behavior, and response structures matching the product contract.
-- `src/types/api.ts`: shared types for `FaceType`, `Gender`, upload, analysis, and hairstyle generation responses.
-- `src/utils/imageCompression.ts`: browser image compression helper for files over 2MB.
-- `src/store/session.ts`: client-side session state for the active photo, selected gender, face analysis, and generated hairstyles.
+核心模块：
 
-Pages must depend on `services/api.ts`, not on mock internals. Replacing mock behavior with real Vercel/API calls should not require rewriting the UI flow.
+- `src/services/api.ts`：页面使用的 API facade，暴露 `uploadImage`、`analyzeFace`、`generateHairstyles`。
+- `src/services/mockApi.ts`：mock 实现，提供真实感延迟、可测试失败路径，以及与产品契约一致的返回结构。
+- `src/types/api.ts`：集中定义 `FaceType`、`Gender`、上传响应、分析响应、发型生成响应等类型。
+- `src/utils/imageCompression.ts`：浏览器端图片压缩工具，用于处理大于 2MB 的图片。
+- `src/store/session.ts`：客户端会话状态，保存当前照片、性别、脸型分析结果和生成结果。
 
-## Data Flow
+页面必须依赖 `services/api.ts`，不能直接依赖 mock 内部实现。这样后续接真实后端时，UI 流程不需要重写。
 
-1. User opens `/`.
-2. User selects or captures an image.
-3. Frontend validates image MIME type.
-4. If the file is larger than 2MB, frontend compresses it.
-5. User selects gender and starts analysis.
-6. App stores the local preview and selected gender in session state, then navigates to `/analysis`.
-7. Analysis page calls the API facade in sequence:
+## 数据流
+
+1. 用户打开 `/`。
+2. 用户选择或拍摄图片。
+3. 前端校验图片 MIME 类型。
+4. 如果图片大于 2MB，前端先压缩。
+5. 用户选择性别并点击开始分析。
+6. 应用保存本地预览图和性别到会话状态，然后跳转 `/analysis`。
+7. 分析页按顺序调用 API facade：
    - `uploadImage(image)`
    - `analyzeFace(imageUrl)`
    - `generateHairstyles({ imageUrl, faceType, gender })`
-8. Results are stored in session state.
-9. App navigates to `/result`.
-10. User swipes through three results and saves an image.
+8. 生成结果写入会话状态。
+9. 应用跳转 `/result`。
+10. 用户左右滑动查看 3 张结果图，并点击保存。
 
-If `/analysis` or `/result` is opened without required session state, the app redirects to `/`.
+如果用户直接打开 `/analysis` 或 `/result`，但缺少必要会话数据，应用自动返回 `/`。
 
 ## UI/UX
 
-The visual direction is "美发沙龙感": warm neutral background, restrained typography, dark primary actions, and photo-led composition. The first screen is the usable tool, not a landing page.
+视觉方向为“美发沙龙感”：浅暖背景、克制排版、深色主按钮、照片主导页面视觉。首屏直接是可用工具，不做营销落地页。
 
-Global layout:
+全局布局：
 
-- Mobile-first with a centered app shell and `max-width: 430px`.
-- Desktop visits should still feel like a phone app preview.
-- Bottom primary actions should respect mobile safe-area insets.
-- Cards and image panels should use modest radii around 8px unless a specific component needs a little more softness.
+- 手机端优先，主体容器居中，最大宽度 `430px`。
+- 桌面访问时仍呈现手机 App 预览感。
+- 底部主操作按钮需要适配手机浏览器 safe area。
+- 卡片和图片面板使用克制圆角，默认约 8px；只在上传区或大图展示处略微更柔和。
 
-Home page:
+首页：
 
-- Product name at top.
-- Upload area in the main content.
-- Image preview after selection.
-- Gender segmented control.
-- Primary button disabled until image and gender are available.
+- 顶部显示产品名。
+- 主区域为上传入口。
+- 选择图片后展示预览。
+- 使用 segmented control 选择性别。
+- 未选择图片或性别前，主按钮禁用。
 
-Analysis page:
+分析页：
 
-- Circular or compact photo preview.
-- Loading animation.
-- Staged text such as "压缩照片", "分析脸型", "生成发型方案".
-- Retry and return-home controls on failure.
+- 显示圆形或紧凑照片缩略图。
+- 显示 loading 动画。
+- 分阶段文案包括“压缩照片”“分析脸型”“生成发型方案”。
+- 失败时提供“重试”和“返回首页”。
 
-Result page:
+结果页：
 
-- Face type and confidence summary.
-- Three swipeable result cards.
-- Each card includes image, hairstyle name, short recommendation, and save button.
-- Include a "重新上传" path back to `/`.
+- 顶部展示脸型和可信度。
+- 主区域展示 3 张可左右滑动的结果卡片。
+- 每张卡片包含结果图、发型名称、简短建议和保存按钮。
+- 提供“重新上传”入口返回首页。
 
-## Mock AI Behavior
+## Mock AI 行为
 
-The mock layer returns valid contract-shaped data:
+mock 层返回与真实接口契约一致的数据：
 
-- Upload returns a local object URL or mock image URL string.
-- Analysis returns one of the seven supported face types and a confidence value.
-- Generation returns exactly three hairstyle results.
+- 上传接口返回本地 object URL 或 mock 图片 URL 字符串。
+- 脸型分析接口返回 7 种支持脸型之一，以及可信度。
+- 发型生成接口固定返回 3 个发型结果。
 
-The mock result images can be deterministic styled preview assets derived from the selected gender and face type. They do not need to alter the user's real face in the MVP, but the UI should make the future replacement path clear by treating them as generated images.
+mock 结果图可以是根据性别和脸型生成的确定性预览资产。MVP 阶段不要求真实融合用户脸部，但 UI 需要把它们作为“生成结果”处理，便于未来替换为真实模型输出。
 
-## Error Handling
+## 错误处理
 
-Validation:
+校验：
 
-- Accept only `image/jpeg`, `image/png`, and `image/webp`.
-- Show a clear error for unsupported file types.
+- 只接受 `image/jpeg`、`image/png`、`image/webp`。
+- 文件类型不支持时显示明确错误。
 
-Compression:
+压缩：
 
-- Compress images larger than 2MB before upload.
-- If compression fails, continue with the original file and show a non-blocking warning that the image is large.
+- 图片大于 2MB 时先进行压缩。
+- 如果压缩失败，继续使用原图，并显示非阻塞提示说明图片较大。
 
-Process failures:
+流程失败：
 
-- Upload, analysis, and generation errors should all show a retry option.
-- Generation failure may also offer return to home.
-- Mock APIs should include controllable failure paths in tests, but normal app behavior should succeed by default.
+- 上传、分析、生成任一阶段失败，都显示重试入口。
+- 生成失败时也可以提供返回首页入口。
+- mock API 需要保留可控失败路径用于测试，但正常应用流程默认成功。
 
-Saving:
+保存：
 
-- Prefer `<a download>` for saving generated images.
-- On mobile browsers where download is limited, show guidance to long-press the image to save.
+- 优先使用 `<a download>` 保存生成图片。
+- 如果移动端浏览器不支持下载行为，提示用户长按图片保存。
 
-## Testing
+## 测试
 
-Use automated tests for behavior that carries product risk:
+自动化测试覆盖高风险行为：
 
-- Image validation and compression decision logic.
-- Mock API response shape.
-- Session state read/write behavior.
-- Home page disabled/enabled start button behavior.
-- Gender selection.
-- Redirect when required session state is missing.
-- Successful analysis flow stores three results.
+- 图片类型校验和压缩决策逻辑。
+- mock API 返回结构。
+- 会话状态读写。
+- 首页开始按钮禁用/启用逻辑。
+- 性别选择。
+- 缺少会话数据时的路由重定向。
+- 分析成功后写入 3 个结果。
 
-Final verification commands:
+最终验证命令：
 
 - `npm test`
 - `npm run build`
 
-If a development server is started, manually inspect the three routes and the upload-to-result happy path.
+如果启动了开发服务器，还需要手动检查 `/`、`/analysis`、`/result` 三个页面，以及从上传到结果页的主流程。
 
-## Delivery
+## 交付
 
-The implementation should include:
+实现内容包括：
 
-- Vite React TypeScript app.
-- `.gitignore` covering dependencies, build output, env files, and `.superpowers`.
-- Local git repository.
-- One local commit for the approved design, followed by implementation commits or a final local commit after the MVP is complete.
+- Vite React TypeScript 应用。
+- `.gitignore` 忽略依赖、构建产物、环境变量文件和 `.superpowers`。
+- 本地 git 仓库。
+- 已确认设计文档的本地提交，以及 MVP 完成后的实现提交。
 
-Remote hosting and Vercel deployment are deferred until the user provides a Git remote URL and any required deployment credentials.
+远程 Git 托管和 Vercel 部署推迟到用户提供远程仓库 URL 和必要部署凭据之后。
