@@ -47,10 +47,7 @@ export default async function handler(request: VercelRequestLike, response: Verc
         model: imageModel,
         prompt: prompt.prompt,
         size: "2K" as unknown as "1024x1024",
-        response_format: "url",
-        extra_body: {
-          watermark: true
-        }
+        response_format: "url"
       }).catch((error) => {
         logApiError("generate-hairstyles.ark-images", error);
         throw new Error("ARK_API_ERROR");
