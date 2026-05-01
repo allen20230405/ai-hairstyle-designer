@@ -1,7 +1,6 @@
 import { ArrowLeft, Download, RotateCcw } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import { FACE_TYPE_LABELS } from "../services/mockApi";
 import { clearSession, getSession } from "../store/session";
 
 export default function ResultPage() {
@@ -27,12 +26,10 @@ export default function ResultPage() {
       </header>
 
       <section className="result-summary">
-        <p className="eyebrow">Face Shape</p>
-        <h1>{FACE_TYPE_LABELS[session.faceType]}</h1>
-        <p>AI 可信度 {Math.round(session.confidence * 100)}%。以下 3 款发型适合作为理发前沟通参考。</p>
+        <h1>发型预览</h1>
       </section>
 
-      <section className="result-carousel" aria-label="发型结果">
+      <section className="result-list" aria-label="发型结果">
         {session.hairstyles.map((style, index) => (
           <article className="result-card" key={style.styleId}>
             <img src={style.imageUrl} alt={`${style.name} 发型效果图`} />
@@ -48,8 +45,6 @@ export default function ResultPage() {
           </article>
         ))}
       </section>
-
-      <p className="save-tip">如果手机浏览器未直接下载，可以长按图片保存到相册。</p>
 
       <div className="bottom-action">
         <button className="secondary-button wide" type="button" onClick={restart}>

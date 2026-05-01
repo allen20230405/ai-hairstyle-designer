@@ -50,7 +50,7 @@ describe("AnalysisPage", () => {
 
     renderAnalysis();
 
-    expect(screen.getByText("分析中，请稍候")).toBeInTheDocument();
+    expect(screen.getByText("正在生成发型")).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText("结果页")).toBeInTheDocument());
 
     expect(getSession()).toMatchObject({

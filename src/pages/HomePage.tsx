@@ -1,4 +1,4 @@
-import { Camera, Sparkles, Upload } from "lucide-react";
+import { Camera } from "lucide-react";
 import { ChangeEvent, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -83,13 +83,7 @@ export default function HomePage() {
   return (
     <main className="screen home-screen">
       <header className="app-header">
-        <div>
-          <p className="eyebrow">Salon AI Preview</p>
-          <h1>AI 发型设计师</h1>
-        </div>
-        <div className="header-mark" aria-hidden="true">
-          <Sparkles size={22} />
-        </div>
+        <h1>AI 发型设计师</h1>
       </header>
 
       <section className="upload-panel" aria-label="照片上传">
@@ -107,22 +101,15 @@ export default function HomePage() {
           ) : (
             <span className="upload-empty">
               <Camera size={42} />
-              <span>上传或拍摄头像</span>
-              <small>建议使用正面、光线清晰的照片</small>
+              <span>上传头像</span>
             </span>
           )}
         </label>
-        <div className="upload-meta">
-          <Upload size={18} />
-          <span>{selectedFile ? selectedFile.name : "支持 JPG / PNG / WebP"}</span>
-        </div>
+        {selectedFile ? <p className="upload-meta">{selectedFile.name}</p> : null}
       </section>
 
       <section className="field-group" aria-label="选择性别">
-        <div className="section-heading">
-          <h2>选择发型推荐方向</h2>
-          <p>用于匹配首版 mock 发型方案</p>
-        </div>
+        <h2>选择性别</h2>
         <div className="segmented-control">
           {GENDER_OPTIONS.map((option) => (
             <button
