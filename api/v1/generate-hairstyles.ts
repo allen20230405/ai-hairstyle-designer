@@ -1,6 +1,6 @@
 import { createArkClient } from "../_lib/ark.js";
 import { buildHairstylePrompts } from "../_lib/hairstyles.js";
-import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode, safeErrorDetail } from "../_lib/http.js";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
 import type OpenAI from "openai";
 import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api.js";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
@@ -65,8 +65,6 @@ export default async function handler(request: VercelRequestLike, response: Verc
     return;
   }
 
-  let arkErrorDetail = "";
-
   try {
     const { client, imageModel } = createArkClient();
     const prompts = buildHairstylePrompts(body);
@@ -80,7 +78,6 @@ export default async function handler(request: VercelRequestLike, response: Verc
         response_format: "url",
         watermark: false
       }).catch((error) => {
-        arkErrorDetail = safeErrorDetail(error);
         logApiError("generate-hairstyles.ark-images", error);
         throw new Error("ARK_API_ERROR");
       });
@@ -102,6 +99,6 @@ export default async function handler(request: VercelRequestLike, response: Verc
   } catch (error) {
     logApiError("generate-hairstyles", error);
     const code = mapErrorCode(error);
-    jsonError(response, 500, code, messageForErrorCode(code), code === "ARK_API_ERROR" ? arkErrorDetail : undefined);
+    jsonError(response, 500, code, messageForErrorCode(code));
   }
 }
