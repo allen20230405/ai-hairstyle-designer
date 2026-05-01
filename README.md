@@ -8,7 +8,7 @@
 - 前端校验图片格式，并对大图执行压缩处理
 - 选择性别，进入分析流程
 - 调用火山方舟视觉模型分析脸型
-- 调用火山方舟 Seedream 图片生成模型生成 3 张发型效果图
+- 调用火山方舟 Seedream 5 图生图模型生成 3 张发型效果图
 - 结果页支持左右滑动查看和保存图片
 
 ## 技术栈
@@ -40,7 +40,7 @@ docs/
 
 ## 环境变量
 
-复制 `.env.example` 为 `.env.local`，并填写真实密钥：
+复制 `.env.example` 为 `.env`，并填写真实密钥：
 
 ```env
 ARK_API_KEY=你的火山方舟 API Key
@@ -50,7 +50,39 @@ ARK_IMAGE_MODEL=doubao-seedream-5-0-260128
 BLOB_READ_WRITE_TOKEN=你的 Vercel Blob Token
 ```
 
-注意：`.env.local` 不要提交到 Git 仓库。
+注意：`.env` 不要提交到 Git 仓库。Vercel 生产环境需要在 Project Settings 的 Environment Variables 中单独配置同名变量。
+
+## AI 调用说明
+
+### 脸型分析
+
+脸型分析使用火山方舟 OpenAI 兼容接口的 Responses API：
+
+```text
+model: doubao-seed-2-0-lite-260215
+input: input_image + input_text
+```
+
+接口返回值会解析为系统内部支持的 7 种脸型：
+
+```text
+oval, round, square, long, heart, pear, diamond
+```
+
+### 发型生成
+
+发型生成使用 Seedream 5 图生图：
+
+```text
+model: doubao-seedream-5-0-260128
+image: 用户上传后保存到 Vercel Blob 的图片 URL
+prompt: 发型与身份保持提示词
+size: 2K
+response_format: url
+watermark: false
+```
+
+重点：当前生成流程不是纯文生图。上传图片 URL 会作为 `image` 参数传给 Seedream，用于尽量保持原图人物的五官、脸型、肤色和身份一致。
 
 ## 本地开发
 
@@ -158,7 +190,8 @@ npm run build
 1. 将项目导入 Vercel。
 2. 在 Vercel Project Settings 中配置环境变量。
 3. 确认已开通 Vercel Blob，并配置 `BLOB_READ_WRITE_TOKEN`。
-4. 部署后访问 Vercel 分配的 HTTPS 域名。
+4. 修改环境变量后必须重新部署，新的变量才会生效。
+5. 部署后访问 Vercel 分配的 HTTPS 域名。
 
 ## 说明
 
