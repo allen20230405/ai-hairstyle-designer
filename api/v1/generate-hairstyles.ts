@@ -1,8 +1,12 @@
 import { createArkClient } from "../_lib/ark.js";
 import { buildHairstylePrompts } from "../_lib/hairstyles.js";
-import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
+import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode, safeErrorDetail } from "../_lib/http.js";
 import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api.js";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
+
+export const config = {
+  maxDuration: 60
+};
 
 const FACE_TYPES: FaceType[] = ["oval", "round", "square", "long", "heart", "pear", "diamond"];
 const GENDERS: Gender[] = ["male", "female"];
@@ -37,18 +41,20 @@ export default async function handler(request: VercelRequestLike, response: Verc
     return;
   }
 
+  let arkErrorDetail = "";
+
   try {
     const { client, imageModel } = createArkClient();
     const prompts = buildHairstylePrompts(body);
-    const results: HairstyleResult[] = [];
 
-    for (const prompt of prompts) {
+    const results = await Promise.all(prompts.map(async (prompt): Promise<HairstyleResult> => {
       const imageResponse = await client.images.generate({
         model: imageModel,
         prompt: prompt.prompt,
         size: "2K" as unknown as "1024x1024",
         response_format: "url"
       }).catch((error) => {
+        arkErrorDetail = safeErrorDetail(error);
         logApiError("generate-hairstyles.ark-images", error);
         throw new Error("ARK_API_ERROR");
       });
@@ -58,18 +64,18 @@ export default async function handler(request: VercelRequestLike, response: Verc
         throw new Error("ARK_RESPONSE_PARSE_ERROR");
       }
 
-      results.push({
+      return {
         styleId: prompt.styleId,
         name: prompt.name,
         advice: prompt.advice,
         imageUrl
-      });
-    }
+      };
+    }));
 
     json(response, 200, { results });
   } catch (error) {
     logApiError("generate-hairstyles", error);
     const code = mapErrorCode(error);
-    jsonError(response, 500, code, messageForErrorCode(code));
+    jsonError(response, 500, code, messageForErrorCode(code), code === "ARK_API_ERROR" ? arkErrorDetail : undefined);
   }
 }
