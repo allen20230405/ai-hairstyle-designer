@@ -22,7 +22,7 @@ describe("mock API", () => {
 
   it("generates exactly three salon-themed hairstyle results", async () => {
     const response = await generateHairstylesMock(
-      { imageUrl: "mock-upload://face.jpg", faceType: "oval", gender: "female" },
+      { imageUrl: "mock-upload://face.jpg", faceType: "oval", gender: "female", scene: "date" },
       { delayMs: 0 }
     );
 

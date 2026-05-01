@@ -7,7 +7,8 @@ describe("buildHairstylePrompts", () => {
     const prompts = buildHairstylePrompts({
       imageUrl: "https://example.com/face.jpg",
       faceType: "oval",
-      gender: "female"
+      gender: "female",
+      scene: "date"
     });
 
     expect(prompts).toHaveLength(3);
@@ -17,5 +18,6 @@ describe("buildHairstylePrompts", () => {
     expect(prompts.every((prompt) => prompt.prompt.includes("https://example.com/face.jpg"))).toBe(true);
     expect(prompts[0].prompt).toContain("保持原图人物100%的面部特征");
     expect(prompts[0].prompt).toContain("只改变发型为空气感锁骨发");
+    expect(prompts[0].prompt).toContain("场景风格：约会氛围");
   });
 });

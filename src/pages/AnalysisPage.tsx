@@ -31,7 +31,8 @@ export default function AnalysisPage() {
         const generationResponse = await generateHairstyles({
           imageUrl: uploadResponse.imageUrl,
           faceType: analysisResponse.faceType,
-          gender: session.gender!
+          gender: session.gender!,
+          scene: session.scene ?? "daily"
         });
         if (cancelled) return;
 
@@ -54,7 +55,7 @@ export default function AnalysisPage() {
     return () => {
       cancelled = true;
     };
-  }, [attempt, navigate, session.gender, session.previewUrl, session.workingFile]);
+  }, [attempt, navigate, session.gender, session.previewUrl, session.scene, session.workingFile]);
 
   function returnHome() {
     clearSession();
@@ -67,7 +68,7 @@ export default function AnalysisPage() {
         <button className="icon-button" type="button" onClick={returnHome} aria-label="返回首页">
           <ArrowLeft size={20} />
         </button>
-        <span>AI 发型设计师</span>
+        <span aria-hidden="true" />
       </header>
 
       <section className="analysis-panel">

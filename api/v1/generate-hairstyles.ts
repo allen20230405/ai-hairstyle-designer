@@ -2,7 +2,7 @@ import { createArkClient } from "../_lib/ark.js";
 import { buildHairstylePrompts } from "../_lib/hairstyles.js";
 import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
 import type OpenAI from "openai";
-import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api.js";
+import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult, SceneType } from "../../src/types/api.js";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
 
 export const config = {
@@ -11,6 +11,7 @@ export const config = {
 
 const FACE_TYPES: FaceType[] = ["oval", "round", "square", "long", "heart", "pear", "diamond"];
 const GENDERS: Gender[] = ["male", "female"];
+const SCENES: SceneType[] = ["daily", "work", "date", "party"];
 
 type SeedreamImageRequest = {
   image: string;
@@ -31,10 +32,13 @@ function parseRequest(body: unknown): GenerateHairstylesRequest | undefined {
     return undefined;
   }
 
+  const scene = maybeBody.scene && SCENES.includes(maybeBody.scene) ? maybeBody.scene : "daily";
+
   return {
     imageUrl: maybeBody.imageUrl,
     faceType: maybeBody.faceType,
-    gender: maybeBody.gender
+    gender: maybeBody.gender,
+    scene
   };
 }
 

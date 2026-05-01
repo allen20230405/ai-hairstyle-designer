@@ -3,7 +3,7 @@ import { ChangeEvent, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { setSession } from "../store/session";
-import type { Gender } from "../types/api";
+import type { Gender, SceneType } from "../types/api";
 import {
   compressImageIfNeeded,
   formatFileSize,
@@ -16,12 +16,20 @@ const GENDER_OPTIONS: Array<{ value: Gender; label: string }> = [
   { value: "male", label: "男性" }
 ];
 
+const SCENE_OPTIONS: Array<{ value: SceneType; label: string }> = [
+  { value: "daily", label: "日常" },
+  { value: "work", label: "工作" },
+  { value: "date", label: "约会" },
+  { value: "party", label: "聚会" }
+];
+
 export default function HomePage() {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File>();
   const [workingFile, setWorkingFile] = useState<File>();
   const [previewUrl, setPreviewUrl] = useState("");
   const [gender, setGender] = useState<Gender>();
+  const [scene, setScene] = useState<SceneType>("daily");
   const [error, setError] = useState("");
   const [warning, setWarning] = useState("");
   const [isPreparing, setIsPreparing] = useState(false);
@@ -75,6 +83,7 @@ export default function HomePage() {
       workingFile,
       previewUrl,
       gender,
+      scene,
       warning
     });
     navigate("/analysis");
@@ -83,7 +92,7 @@ export default function HomePage() {
   return (
     <main className="screen home-screen">
       <header className="app-header">
-        <h1>AI 发型设计师</h1>
+        <h1>寻找你的专属发型</h1>
       </header>
 
       <section className="upload-panel" aria-label="照片上传">
@@ -125,8 +134,24 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="field-group" aria-label="选择场景">
+        <h2>选择场景</h2>
+        <div className="scene-grid">
+          {SCENE_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              className={scene === option.value ? "scene-item active" : "scene-item"}
+              type="button"
+              onClick={() => setScene(option.value)}
+              aria-pressed={scene === option.value}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </section>
+
       {error ? <p className="message error">{error}</p> : null}
-      {warning ? <p className="message warning">{warning}</p> : null}
 
       <div className="bottom-action">
         <button className="primary-button" type="button" disabled={!canStart || isPreparing} onClick={startAnalysis}>

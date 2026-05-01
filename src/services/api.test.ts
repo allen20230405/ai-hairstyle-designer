@@ -46,7 +46,7 @@ describe("frontend API service", () => {
     );
 
     await expect(
-      generateHairstyles({ imageUrl: "https://blob.test/a.jpg", faceType: "oval", gender: "female" })
+      generateHairstyles({ imageUrl: "https://blob.test/a.jpg", faceType: "oval", gender: "female", scene: "daily" })
     ).rejects.toThrow("服务端缺少 ARK_API_KEY 环境变量。");
   });
 });

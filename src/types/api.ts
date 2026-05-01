@@ -1,5 +1,7 @@
 export type Gender = "male" | "female";
 
+export type SceneType = "daily" | "work" | "date" | "party";
+
 export type FaceType =
   | "oval"
   | "round"
@@ -27,6 +29,7 @@ export type GenerateHairstylesRequest = {
   imageUrl: string;
   faceType: FaceType;
   gender: Gender;
+  scene: SceneType;
 };
 
 export type HairstyleResult = {
@@ -46,6 +49,7 @@ export type SessionState = {
   previewUrl?: string;
   uploadedImageUrl?: string;
   gender?: Gender;
+  scene?: SceneType;
   faceType?: FaceType;
   confidence?: number;
   hairstyles?: HairstyleResult[];

@@ -1,8 +1,18 @@
 :root {
-  color: #1f1f1f;
-  background: #f6f3ef;
+  --bg-main: #fcfaf8;
+  --accent: #d4b89d;
+  --accent-light: #f5ede4;
+  --text-primary: #2a2a2a;
+  --text-secondary: #8a8a8e;
+  --card-bg: #ffffff;
+  --shadow: 0 12px 30px rgba(180, 160, 140, 0.12);
+  --radius-lg: 28px;
+  --radius-sm: 12px;
+  color: var(--text-primary);
+  background: var(--bg-main);
   font-family:
-    Inter, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    "HarmonyOS Sans SC", "PingFang SC", "MiSans", "Noto Sans CJK SC", "Microsoft YaHei UI", "Microsoft YaHei",
+    system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -16,7 +26,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background: #f6f3ef;
+  background: #f0ebe5;
 }
 
 button,
@@ -41,7 +51,8 @@ label:focus-visible {
   width: min(100%, 430px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 20px 16px calc(104px + env(safe-area-inset-bottom));
+  padding: 18px 24px calc(118px + env(safe-area-inset-bottom));
+  background: var(--bg-main);
 }
 
 .app-header,
@@ -56,10 +67,11 @@ label:focus-visible {
 .analysis-panel h1,
 .result-summary h1 {
   margin: 0;
-  color: #181818;
-  font-size: 30px;
-  line-height: 1.12;
-  letter-spacing: 0;
+  color: #5a524d;
+  font-size: 26px;
+  font-weight: 350;
+  line-height: 1.2;
+  letter-spacing: 3px;
 }
 
 .eyebrow {
@@ -76,10 +88,10 @@ label:focus-visible {
   width: 44px;
   height: 44px;
   place-items: center;
-  border: 1px solid #e1d3c8;
-  border-radius: 8px;
-  background: #fffaf6;
-  color: #332b25;
+  border: 1px solid #eee6df;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.74);
+  color: #5a524d;
 }
 
 .icon-button {
@@ -89,25 +101,34 @@ label:focus-visible {
 .compact-header {
   justify-content: space-between;
   min-height: 48px;
-  color: #6c5e55;
-  font-size: 15px;
-  font-weight: 700;
+  color: #5a524d;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .upload-panel {
-  margin-top: 22px;
+  margin-top: 26px;
 }
 
 .upload-target {
   display: grid;
-  min-height: 430px;
+  min-height: 380px;
   overflow: hidden;
   place-items: center;
-  border: 1px solid #ded8d2;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 16px 40px rgba(40, 34, 29, 0.08);
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius-lg);
+  background: var(--card-bg);
+  box-shadow: none;
   cursor: pointer;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.upload-target:hover {
+  background: var(--accent-light);
+  transform: translateY(-2px);
 }
 
 .upload-empty {
@@ -115,14 +136,14 @@ label:focus-visible {
   gap: 10px;
   place-items: center;
   padding: 28px;
-  color: #6d5d53;
+  color: var(--accent);
   text-align: center;
 }
 
 .upload-empty span {
-  color: #1f1f1f;
-  font-size: 20px;
-  font-weight: 800;
+  color: #5a524d;
+  font-size: 17px;
+  font-weight: 500;
 }
 
 .preview-image {
@@ -137,53 +158,68 @@ label:focus-visible {
 .result-summary p,
 .result-card-body p,
 .save-tip {
-  color: #786a60;
+  color: var(--text-secondary);
 }
 
 .upload-meta {
   margin: 10px 2px 0;
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .field-group {
-  margin-top: 20px;
+  margin-top: 28px;
 }
 
 .field-group h2,
 .result-card-body h2 {
   margin: 0;
-  color: #202020;
-  font-size: 16px;
-  letter-spacing: 0;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.segmented-control,
+.scene-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .segmented-control {
-  display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 14px;
-  padding: 6px;
-  border: 1px solid #ded8d2;
-  border-radius: 10px;
-  background: #fff;
 }
 
-.segment {
-  min-height: 44px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #6f6259;
+.scene-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.segment,
+.scene-item {
+  min-height: 48px;
+  border: 1px solid #eee;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text-secondary);
+  font-size: 14px;
   cursor: pointer;
 }
 
-.segment.active {
-  background: #181818;
+.segment.active,
+.scene-item.active {
+  background: #dfb0a4;
   color: #fff;
-  font-weight: 800;
+  font-weight: 600;
+  border-color: #dfb0a4;
+  box-shadow: 0 12px 24px rgba(223, 176, 164, 0.22);
 }
 
 .message {
@@ -211,7 +247,8 @@ label:focus-visible {
   display: flex;
   justify-content: center;
   padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(246, 243, 239, 0), rgba(246, 243, 239, 0.95) 28%, #f6f3ef);
+  padding: 20px 24px calc(30px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg-main) 80%, rgba(252, 250, 248, 0));
 }
 
 .primary-button,
@@ -222,19 +259,20 @@ label:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 50px;
-  border-radius: 8px;
+  min-height: 58px;
+  border-radius: 29px;
   cursor: pointer;
-  font-weight: 800;
+  font-size: 16px;
+  font-weight: 600;
   text-decoration: none;
 }
 
 .primary-button {
   width: min(100%, 394px);
   border: 0;
-  background: #181818;
+  background: var(--text-primary);
   color: #fff;
-  box-shadow: 0 16px 34px rgba(36, 32, 29, 0.18);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
 }
 
 .primary-button:disabled {
@@ -244,9 +282,9 @@ label:focus-visible {
 }
 
 .secondary-button {
-  border: 1px solid #d8c8bc;
-  background: #fffaf6;
-  color: #29231f;
+  border: 1px solid var(--text-primary);
+  background: transparent;
+  color: var(--text-primary);
   padding: 0 18px;
 }
 
@@ -258,7 +296,7 @@ label:focus-visible {
   min-height: 44px;
   border: 0;
   background: transparent;
-  color: #6f6259;
+  color: var(--text-secondary);
 }
 
 .analysis-screen,
@@ -300,27 +338,30 @@ label:focus-visible {
   height: 48px;
   place-items: center;
   border-radius: 50%;
-  background: #181818;
+  background: var(--text-primary);
   color: #fff;
   animation: pulse 1.4s ease-in-out infinite;
 }
 
 .analysis-panel h1 {
   margin-top: 24px;
-  font-size: 28px;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 
 .analysis-panel p {
   max-width: 300px;
   margin: 12px 0 0;
-  font-size: 15px;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 .error-panel {
   width: 100%;
   margin-top: 24px;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: #fff0ee;
   color: #9f2f22;
 }
@@ -338,21 +379,23 @@ label:focus-visible {
 }
 
 .result-summary h1 {
-  font-size: 30px;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 
 .result-list {
   display: grid;
-  gap: 18px;
-  margin-top: 22px;
+  gap: 24px;
+  margin-top: 24px;
 }
 
 .result-card {
   overflow: hidden;
-  border: 1px solid #ded8d2;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 18px 44px rgba(40, 34, 29, 0.08);
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
 }
 
 .result-card img {
@@ -364,29 +407,41 @@ label:focus-visible {
 }
 
 .result-card-body {
-  padding: 16px;
+  padding: 20px;
 }
 
 .result-index {
-  color: #857369;
-  font-size: 12px;
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 10px;
   font-weight: 800;
 }
 
 .result-card-body h2 {
-  margin-top: 6px;
+  margin-top: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .result-card-body p {
   min-height: 44px;
   margin: 8px 0 14px;
+  color: var(--text-secondary);
   font-size: 14px;
+  line-height: 1.55;
 }
 
 .save-link {
   width: 100%;
-  border: 1px solid #181818;
-  background: #181818;
+  border: 1px solid var(--text-primary);
+  background: var(--text-primary);
   color: #fff;
 }
 
