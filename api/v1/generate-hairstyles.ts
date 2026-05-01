@@ -1,6 +1,7 @@
 import { createArkClient } from "../_lib/ark.js";
 import { buildHairstylePrompts } from "../_lib/hairstyles.js";
 import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode, safeErrorDetail } from "../_lib/http.js";
+import type OpenAI from "openai";
 import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult } from "../../src/types/api.js";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
 
@@ -10,6 +11,15 @@ export const config = {
 
 const FACE_TYPES: FaceType[] = ["oval", "round", "square", "long", "heart", "pear", "diamond"];
 const GENDERS: Gender[] = ["male", "female"];
+
+type SeedreamImageRequest = {
+  image: string;
+  model: string;
+  prompt: string;
+  response_format: "url";
+  size: "2K";
+  watermark: boolean;
+};
 
 function parseRequest(body: unknown): GenerateHairstylesRequest | undefined {
   const maybeBody = body as Partial<GenerateHairstylesRequest> | undefined;
@@ -26,6 +36,20 @@ function parseRequest(body: unknown): GenerateHairstylesRequest | undefined {
     faceType: maybeBody.faceType,
     gender: maybeBody.gender
   };
+}
+
+function generateImageFromReference(client: OpenAI, params: SeedreamImageRequest) {
+  return client.images.generate(
+    {
+      model: params.model,
+      prompt: params.prompt,
+      size: params.size as unknown as "1024x1024",
+      response_format: params.response_format
+    },
+    {
+      body: params
+    }
+  );
 }
 
 export default async function handler(request: VercelRequestLike, response: VercelResponseLike) {
@@ -48,11 +72,13 @@ export default async function handler(request: VercelRequestLike, response: Verc
     const prompts = buildHairstylePrompts(body);
 
     const results = await Promise.all(prompts.map(async (prompt): Promise<HairstyleResult> => {
-      const imageResponse = await client.images.generate({
+      const imageResponse = await generateImageFromReference(client, {
+        image: body.imageUrl,
         model: imageModel,
         prompt: prompt.prompt,
-        size: "2K" as unknown as "1024x1024",
-        response_format: "url"
+        size: "2K",
+        response_format: "url",
+        watermark: false
       }).catch((error) => {
         arkErrorDetail = safeErrorDetail(error);
         logApiError("generate-hairstyles.ark-images", error);
