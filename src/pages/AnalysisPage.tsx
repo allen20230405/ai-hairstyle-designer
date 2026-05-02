@@ -22,7 +22,9 @@ export default function AnalysisPage() {
     async function runAnalysis() {
       try {
         setError("");
-        const uploadResponse = await uploadImage(session.workingFile as File);
+        const uploadResponse = session.uploadedImageUrl
+          ? { status: "success" as const, imageUrl: session.uploadedImageUrl }
+          : await uploadImage(session.workingFile as File);
         if (cancelled) return;
 
         const generationResponse = await generateHairstyles({

@@ -1,7 +1,7 @@
 import { ArrowLeft, Download, RotateCcw } from "lucide-react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import { clearSession, getSession } from "../store/session";
+import { clearSession, getSession, updateSession } from "../store/session";
 
 export default function ResultPage() {
   const navigate = useNavigate();
@@ -11,15 +11,20 @@ export default function ResultPage() {
     return <Navigate to="/" replace />;
   }
 
-  function restart() {
+  function returnHome() {
     clearSession();
     navigate("/", { replace: true });
+  }
+
+  function regenerate() {
+    updateSession({ hairstyles: undefined });
+    navigate("/analysis", { replace: true });
   }
 
   return (
     <main className="screen result-screen">
       <header className="compact-header">
-        <button className="icon-button" type="button" onClick={restart} aria-label="重新上传">
+        <button className="icon-button" type="button" onClick={returnHome} aria-label="返回首页">
           <ArrowLeft size={20} />
         </button>
         <span>生成结果</span>
@@ -47,9 +52,9 @@ export default function ResultPage() {
       </section>
 
       <div className="bottom-action">
-        <button className="secondary-button wide" type="button" onClick={restart}>
+        <button className="secondary-button wide" type="button" onClick={regenerate}>
           <RotateCcw size={18} />
-          重新上传
+          重新生成
         </button>
       </div>
     </main>

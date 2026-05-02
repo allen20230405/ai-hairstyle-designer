@@ -43,5 +43,7 @@ describe("ResultPage", () => {
 
     expect(screen.getAllByRole("img", { name: /发型效果图/ })).toHaveLength(3);
     expect(screen.getAllByRole("link", { name: "保存图片" })).toHaveLength(3);
+    expect(screen.getByRole("button", { name: "重新生成" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "重新上传" })).not.toBeInTheDocument();
   });
 });

@@ -1,7 +1,7 @@
 const SUPPORTED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const COMPRESSION_THRESHOLD_BYTES = 2 * 1024 * 1024;
-const MAX_IMAGE_EDGE = 1600;
-const JPEG_QUALITY = 0.82;
+const COMPRESSION_THRESHOLD_BYTES = 600 * 1024;
+const MAX_IMAGE_EDGE = 1024;
+const JPEG_QUALITY = 0.72;
 
 type SizedFile = {
   size: number;

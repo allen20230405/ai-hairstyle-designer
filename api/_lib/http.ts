@@ -42,10 +42,17 @@ export function safeErrorDetail(error: unknown): string {
 }
 
 export function logApiError(scope: string, error: unknown) {
+  const errorRecord = typeof error === "object" && error !== null ? (error as Record<string, unknown>) : {};
+
   console.error(
     JSON.stringify({
       scope,
       message: error instanceof Error ? error.message : String(error),
+      status: errorRecord.status,
+      code: errorRecord.code,
+      type: errorRecord.type,
+      requestId: errorRecord.request_id,
+      providerError: errorRecord.error,
       stack: error instanceof Error ? error.stack : undefined
     })
   );
