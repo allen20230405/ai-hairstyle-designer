@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { analyzeFace, generateHairstyles, uploadImage } from "./api";
+import { generateHairstyles, uploadImage } from "./api";
 
 describe("frontend API service", () => {
   beforeEach(() => {
@@ -23,22 +23,6 @@ describe("frontend API service", () => {
     );
   });
 
-  it("posts JSON for face analysis", async () => {
-    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ faceType: "oval", confidence: 0.95 })));
-    vi.stubGlobal("fetch", fetchMock);
-
-    await analyzeFace({ imageUrl: "https://blob.test/a.jpg" });
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/api/v1/analyze-face",
-      expect.objectContaining({
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: "https://blob.test/a.jpg" })
-      })
-    );
-  });
-
   it("throws readable errors for failed API responses", async () => {
     vi.stubGlobal(
       "fetch",
@@ -46,7 +30,7 @@ describe("frontend API service", () => {
     );
 
     await expect(
-      generateHairstyles({ imageUrl: "https://blob.test/a.jpg", faceType: "oval", gender: "female", scene: "daily" })
+      generateHairstyles({ imageUrl: "https://blob.test/a.jpg", gender: "female", scene: "daily" })
     ).rejects.toThrow("服务端缺少 ARK_API_KEY 环境变量。");
   });
 });

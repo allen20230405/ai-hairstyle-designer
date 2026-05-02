@@ -32,8 +32,6 @@ describe("ResultPage", () => {
     setSession({
       previewUrl: "blob:preview",
       gender: "female",
-      faceType: "oval",
-      confidence: 0.96,
       hairstyles: [
         { styleId: "001", name: "空气感锁骨发", advice: "自然修饰脸型。", imageUrl: "data:image/svg+xml,1" },
         { styleId: "002", name: "法式层次卷", advice: "增加轻盈层次。", imageUrl: "data:image/svg+xml,2" },

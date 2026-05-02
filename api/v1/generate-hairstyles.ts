@@ -2,14 +2,13 @@ import { createArkClient } from "../_lib/ark.js";
 import { buildHairstylePrompts } from "../_lib/hairstyles.js";
 import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
 import type OpenAI from "openai";
-import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult, SceneType } from "../../src/types/api.js";
+import type { Gender, GenerateHairstylesRequest, HairstyleResult, SceneType } from "../../src/types/api.js";
 import type { VercelRequestLike, VercelResponseLike } from "../_lib/vercelTypes.js";
 
 export const config = {
   maxDuration: 60
 };
 
-const FACE_TYPES: FaceType[] = ["oval", "round", "square", "long", "heart", "pear", "diamond"];
 const GENDERS: Gender[] = ["male", "female"];
 const SCENES: SceneType[] = ["daily", "work", "date", "party"];
 
@@ -24,11 +23,11 @@ type SeedreamImageRequest = {
 
 function parseRequest(body: unknown): GenerateHairstylesRequest | undefined {
   const maybeBody = body as Partial<GenerateHairstylesRequest> | undefined;
-  if (!maybeBody?.imageUrl || !maybeBody.faceType || !maybeBody.gender) {
+  if (!maybeBody?.imageUrl || !maybeBody.gender) {
     return undefined;
   }
 
-  if (!FACE_TYPES.includes(maybeBody.faceType) || !GENDERS.includes(maybeBody.gender)) {
+  if (!GENDERS.includes(maybeBody.gender)) {
     return undefined;
   }
 
@@ -36,7 +35,6 @@ function parseRequest(body: unknown): GenerateHairstylesRequest | undefined {
 
   return {
     imageUrl: maybeBody.imageUrl,
-    faceType: maybeBody.faceType,
     gender: maybeBody.gender,
     scene
   };

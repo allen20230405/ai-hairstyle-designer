@@ -16,11 +16,9 @@ describe("session store", () => {
     });
   });
 
-  it("updates existing analysis and hairstyle results without removing prior state", () => {
+  it("updates existing hairstyle results without removing prior state", () => {
     setSession({ previewUrl: "blob:preview", gender: "male" });
     updateSession({
-      faceType: "oval",
-      confidence: 0.96,
       hairstyles: [
         {
           styleId: "001",
@@ -33,9 +31,7 @@ describe("session store", () => {
 
     expect(getSession()).toMatchObject({
       previewUrl: "blob:preview",
-      gender: "male",
-      faceType: "oval",
-      confidence: 0.96
+      gender: "male"
     });
     expect(getSession().hairstyles).toHaveLength(1);
   });

@@ -1,7 +1,4 @@
 import type {
-  AnalyzeFaceRequest,
-  AnalyzeFaceResponse,
-  FaceType,
   Gender,
   GenerateHairstylesRequest,
   GenerateHairstylesResponse,
@@ -14,49 +11,28 @@ type MockOptions = {
   fail?: boolean;
 };
 
-const FACE_TYPES: FaceType[] = ["oval", "round", "square", "long", "heart", "pear", "diamond"];
-
-const FACE_TYPE_LABELS: Record<FaceType, string> = {
-  oval: "椭圆形脸",
-  round: "圆形脸",
-  square: "方形脸",
-  long: "长形脸",
-  heart: "心形脸",
-  pear: "梨形脸",
-  diamond: "菱形脸"
-};
-
 const STYLE_NAMES: Record<Gender, string[]> = {
   female: ["空气感锁骨发", "法式层次卷", "柔雾短波波"],
   male: ["自然纹理短发", "轻商务侧分", "蓬松前刺"]
 };
 
-const STYLE_ADVICE: Record<FaceType, string[]> = {
-  oval: ["保留脸部均衡比例，突出自然轮廓。", "层次落点靠近颧骨，显得轻盈。", "适合露出部分额头，整体更精神。"],
-  round: ["增加顶部蓬松度，拉长脸部线条。", "两侧收窄可以削弱圆润感。", "避免厚重齐刘海，保留空气感。"],
-  square: ["用柔和弧度弱化下颌角。", "侧分和层次能平衡硬朗轮廓。", "发尾保留轻盈纹理更自然。"],
-  long: ["增加横向蓬松度，缩短视觉脸长。", "刘海或侧区层次能改善比例。", "避免顶部过高的造型。"],
-  heart: ["下半区增加发量，平衡额头宽度。", "轻薄刘海能柔化上庭。", "发尾外翻会让下巴更协调。"],
-  pear: ["顶部增加体积，平衡下颌宽度。", "侧区线条向上收，轮廓更清爽。", "避免发尾堆在下颌附近。"],
-  diamond: ["柔化颧骨两侧线条。", "额前和下巴附近增加轻盈层次。", "中低层次能让脸型更协调。"]
+const STYLE_ADVICE: Record<Gender, string[]> = {
+  female: ["保留轻盈层次，整体自然耐看。", "增加自然弧度，让轮廓更柔和。", "提升精神感，适合换造型前预览。"],
+  male: ["顶部保留纹理，整体清爽自然。", "适合通勤和日常场景，低调成熟。", "拉高头顶比例，让整体更精神。"]
 };
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-function hashText(text: string): number {
-  return Array.from(text).reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7);
-}
-
-function createResultSvg(gender: Gender, faceType: FaceType, index: number, styleName: string): string {
+function createResultSvg(gender: Gender, index: number, styleName: string): string {
   const palettes = [
     ["#f7f1eb", "#9c6f5a", "#252525", "#d7b8a6"],
     ["#f2eee9", "#3f332e", "#b88d76", "#efe0d6"],
     ["#faf7f4", "#756052", "#1f1f1f", "#cfa58f"]
   ];
   const [bg, hair, ink, accent] = palettes[index];
-  const label = `${FACE_TYPE_LABELS[faceType]} · ${styleName}`;
+  const label = styleName;
   const silhouette = gender === "female" ? "M130 112 C92 126 74 168 82 220 C92 282 250 282 260 220 C268 168 250 126 212 112" : "M108 120 C128 86 218 86 240 120 L230 210 C222 266 126 266 116 210 Z";
 
   const svg = `
@@ -101,31 +77,18 @@ export async function uploadImageMock(file: File, options?: MockOptions): Promis
   );
 }
 
-export async function analyzeFaceMock(
-  request: AnalyzeFaceRequest,
-  options?: MockOptions
-): Promise<AnalyzeFaceResponse> {
-  const hash = hashText(request.imageUrl);
-  const faceType = FACE_TYPES[hash % FACE_TYPES.length];
-  const confidence = Number((0.82 + (hash % 17) / 100).toFixed(2));
-
-  return runMockStep({ faceType, confidence }, options);
-}
-
 export async function generateHairstylesMock(
   request: GenerateHairstylesRequest,
   options?: MockOptions
 ): Promise<GenerateHairstylesResponse> {
   const names = STYLE_NAMES[request.gender];
-  const advice = STYLE_ADVICE[request.faceType];
+  const advice = STYLE_ADVICE[request.gender];
   const results: HairstyleResult[] = names.map((name, index) => ({
-    styleId: `${request.gender}-${request.faceType}-00${index + 1}`,
+    styleId: `${request.gender}-${request.scene}-00${index + 1}`,
     name,
     advice: advice[index],
-    imageUrl: createResultSvg(request.gender, request.faceType, index, name)
+    imageUrl: createResultSvg(request.gender, index, name)
   }));
 
   return runMockStep({ results }, options);
 }
-
-export { FACE_TYPE_LABELS };

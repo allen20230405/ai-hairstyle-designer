@@ -7,7 +7,7 @@ export default function ResultPage() {
   const navigate = useNavigate();
   const session = getSession();
 
-  if (!session.hairstyles?.length || !session.faceType || !session.confidence) {
+  if (!session.hairstyles?.length) {
     return <Navigate to="/" replace />;
   }
 

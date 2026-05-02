@@ -1,4 +1,4 @@
-import type { AnalyzeFaceRequest, GenerateHairstylesRequest } from "../types/api";
+import type { GenerateHairstylesRequest } from "../types/api";
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
   const rawBody = await response.text().catch(() => "");
@@ -32,16 +32,6 @@ export async function uploadImage(image: File) {
   });
 
   return parseJsonResponse<Awaited<ReturnType<typeof import("./mockApi").uploadImageMock>>>(response);
-}
-
-export async function analyzeFace(request: AnalyzeFaceRequest) {
-  const response = await fetch("/api/v1/analyze-face", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(request)
-  });
-
-  return parseJsonResponse<Awaited<ReturnType<typeof import("./mockApi").analyzeFaceMock>>>(response);
 }
 
 export async function generateHairstyles(request: GenerateHairstylesRequest) {

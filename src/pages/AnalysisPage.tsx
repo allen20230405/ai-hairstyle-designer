@@ -2,7 +2,7 @@ import { ArrowLeft, RefreshCw, Scissors } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { analyzeFace, generateHairstyles, uploadImage } from "../services/api";
+import { generateHairstyles, uploadImage } from "../services/api";
 import { clearSession, getSession, updateSession } from "../store/session";
 
 export default function AnalysisPage() {
@@ -25,12 +25,8 @@ export default function AnalysisPage() {
         const uploadResponse = await uploadImage(session.workingFile as File);
         if (cancelled) return;
 
-        const analysisResponse = await analyzeFace({ imageUrl: uploadResponse.imageUrl });
-        if (cancelled) return;
-
         const generationResponse = await generateHairstyles({
           imageUrl: uploadResponse.imageUrl,
-          faceType: analysisResponse.faceType,
           gender: session.gender!,
           scene: session.scene ?? "daily"
         });
@@ -38,8 +34,6 @@ export default function AnalysisPage() {
 
         updateSession({
           uploadedImageUrl: uploadResponse.imageUrl,
-          faceType: analysisResponse.faceType,
-          confidence: analysisResponse.confidence,
           hairstyles: generationResponse.results
         });
         navigate("/result", { replace: true });

@@ -8,7 +8,6 @@ import AnalysisPage from "./AnalysisPage";
 
 vi.mock("../services/api", () => ({
   uploadImage: vi.fn(async () => ({ status: "success", imageUrl: "mock-upload://face.jpg" })),
-  analyzeFace: vi.fn(async () => ({ faceType: "oval", confidence: 0.96 })),
   generateHairstyles: vi.fn(async () => ({
     results: [
       { styleId: "001", name: "空气感锁骨发", advice: "自然修饰脸型。", imageUrl: "data:image/svg+xml,1" },
@@ -41,7 +40,7 @@ describe("AnalysisPage", () => {
     expect(await screen.findByText("首页")).toBeInTheDocument();
   });
 
-  it("runs the analysis flow, stores three results, and navigates to result page", async () => {
+  it("uploads the photo, generates three results, and navigates to result page", async () => {
     setSession({
       workingFile: new File(["face"], "face.jpg", { type: "image/jpeg" }),
       previewUrl: "blob:preview",
@@ -54,9 +53,7 @@ describe("AnalysisPage", () => {
     await waitFor(() => expect(screen.getByText("结果页")).toBeInTheDocument());
 
     expect(getSession()).toMatchObject({
-      uploadedImageUrl: "mock-upload://face.jpg",
-      faceType: "oval",
-      confidence: 0.96
+      uploadedImageUrl: "mock-upload://face.jpg"
     });
     expect(getSession().hairstyles).toHaveLength(3);
   });

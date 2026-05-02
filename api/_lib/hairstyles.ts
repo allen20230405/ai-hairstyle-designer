@@ -1,17 +1,7 @@
-import type { FaceType, Gender, GenerateHairstylesRequest, HairstyleResult, SceneType } from "../../src/types/api.js";
+import type { Gender, GenerateHairstylesRequest, HairstyleResult, SceneType } from "../../src/types/api.js";
 
 type HairstylePrompt = Omit<HairstyleResult, "imageUrl"> & {
   prompt: string;
-};
-
-const FACE_TYPE_LABELS: Record<FaceType, string> = {
-  oval: "椭圆形脸",
-  round: "圆形脸",
-  square: "方形脸",
-  long: "长形脸",
-  heart: "心形脸",
-  pear: "梨形脸",
-  diamond: "菱形脸"
 };
 
 const STYLE_LIBRARY: Record<Gender, Array<{ name: string; advice: string; visual: string }>> = {
@@ -35,17 +25,15 @@ const SCENE_PROMPTS: Record<SceneType, string> = {
 };
 
 export function buildHairstylePrompts(request: GenerateHairstylesRequest): HairstylePrompt[] {
-  const faceLabel = FACE_TYPE_LABELS[request.faceType];
-
   return STYLE_LIBRARY[request.gender].map((style, index) => ({
-    styleId: `${request.gender}-${request.faceType}-00${index + 1}`,
+    styleId: `${request.gender}-${request.scene}-00${index + 1}`,
     name: style.name,
     advice: style.advice,
     prompt: [
       `参考用户头像图片：${request.imageUrl}`,
       `参考图人物，保持原图人物100%的面部特征：五官、脸型、眼耳鼻嘴、下巴轮廓、肤色完全不变。只改变发型为${style.name}。正面人像照，正脸直视镜头，高清质感，自然真实。`,
       `发型细节：${style.visual}。`,
-      `脸型参考：${faceLabel}，性别参考：${request.gender === "female" ? "女性" : "男性"}。`,
+      `性别参考：${request.gender === "female" ? "女性" : "男性"}。`,
       SCENE_PROMPTS[request.scene],
       "不要改变人物身份、年龄、表情、妆容、脸部比例和身体姿态。",
       "避免夸张变脸、避免卡通风、避免文字水印覆盖人脸。"
