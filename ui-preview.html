@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 发型设计师 - 首页预览</title>
+    <style>
+      :root {
+        --bg-main: #fcfaf8;
+        --accent: #d4b89d;
+        --accent-light: #f5ede4;
+        --text-primary: #2a2a2a;
+        --text-secondary: #8a8a8e;
+        --card-bg: #ffffff;
+        --radius-lg: 28px;
+        --radius-sm: 12px;
+        color: var(--text-primary);
+        background: var(--bg-main);
+        font-family:
+          "HarmonyOS Sans SC", "PingFang SC", "MiSans", "Noto Sans CJK SC", "Microsoft YaHei UI",
+          "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        background: #f0ebe5;
+      }
+
+      button {
+        font: inherit;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .screen {
+        width: min(100%, 430px);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 18px 24px 138px;
+        background: var(--bg-main);
+      }
+
+      .app-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .app-header h1 {
+        margin: 0;
+        color: #5a524d;
+        font-size: 26px;
+        font-weight: 350;
+        line-height: 1.2;
+        letter-spacing: 3px;
+      }
+
+      .upload-panel {
+        margin-top: 26px;
+      }
+
+      .upload-target {
+        display: grid;
+        min-height: 380px;
+        overflow: hidden;
+        place-items: center;
+        border: 1.5px dashed var(--accent);
+        border-radius: var(--radius-lg);
+        background: var(--card-bg);
+        cursor: pointer;
+      }
+
+      .upload-empty {
+        display: grid;
+        gap: 10px;
+        place-items: center;
+        padding: 28px;
+        color: var(--accent);
+        text-align: center;
+      }
+
+      .camera-icon {
+        width: 42px;
+        height: 42px;
+      }
+
+      .upload-empty span {
+        color: #5a524d;
+        font-size: 17px;
+        font-weight: 500;
+      }
+
+      .field-group {
+        margin-top: 28px;
+      }
+
+      .field-group h2 {
+        margin: 0;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+      }
+
+      .segmented-control,
+      .scene-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .segment,
+      .scene-item {
+        min-height: 48px;
+        border: 1px solid #eee;
+        border-radius: var(--radius-sm);
+        background: #fff;
+        color: var(--text-secondary);
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .segment.active,
+      .scene-item.active {
+        background: #dfb0a4;
+        color: #fff;
+        font-weight: 600;
+        border-color: #dfb0a4;
+        box-shadow: 0 12px 24px rgba(223, 176, 164, 0.22);
+      }
+
+      .bottom-action {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        padding: 20px 24px 30px;
+        background: linear-gradient(to top, var(--bg-main) 80%, rgba(252, 250, 248, 0));
+      }
+
+      .primary-button {
+        display: inline-flex;
+        width: min(100%, 394px);
+        min-height: 58px;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 29px;
+        background: #c7bcb4;
+        color: #fff;
+        cursor: not-allowed;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .primary-button.ready {
+        background: var(--text-primary);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="screen home-screen">
+      <header class="app-header">
+        <h1>寻找你的专属发型</h1>
+      </header>
+
+      <section class="upload-panel" aria-label="照片上传">
+        <label class="upload-target" for="photo-upload">
+          <span class="upload-empty">
+            <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M14.5 4 16 6h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l1.5-2h5Z"></path>
+              <circle cx="12" cy="13" r="3.5"></circle>
+            </svg>
+            <span>上传头像</span>
+          </span>
+        </label>
+      </section>
+
+      <section class="field-group" aria-label="选择性别">
+        <h2>选择性别</h2>
+        <div class="segmented-control">
+          <button class="segment active" type="button">女性</button>
+          <button class="segment" type="button">男性</button>
+        </div>
+      </section>
+
+      <section class="field-group" aria-label="选择场景">
+        <h2>选择场景</h2>
+        <div class="scene-grid">
+          <button class="scene-item active" type="button">日常</button>
+          <button class="scene-item" type="button">工作</button>
+          <button class="scene-item" type="button">约会</button>
+          <button class="scene-item" type="button">聚会</button>
+        </div>
+      </section>
+
+      <div class="bottom-action">
+        <button class="primary-button ready" type="button">开始生成</button>
+      </div>
+    </main>
+
+    <script>
+      document.querySelectorAll(".segmented-control, .scene-grid").forEach((group) => {
+        group.addEventListener("click", (event) => {
+          const button = event.target.closest("button");
+          if (!button) return;
+          group.querySelectorAll("button").forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>

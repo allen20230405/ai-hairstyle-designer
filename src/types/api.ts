@@ -11,6 +11,7 @@ export type GenerateHairstylesRequest = {
   imageUrl: string;
   gender: Gender;
   scene: SceneType;
+  variationSeed?: string;
 };
 
 export type HairstyleResult = {

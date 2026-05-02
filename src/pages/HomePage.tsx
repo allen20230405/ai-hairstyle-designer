@@ -155,7 +155,7 @@ export default function HomePage() {
 
       <div className="bottom-action">
         <button className="primary-button" type="button" disabled={!canStart || isPreparing} onClick={startAnalysis}>
-          {isPreparing ? "准备照片中" : "开始分析"}
+          {isPreparing ? "准备照片中" : "开始生成"}
         </button>
       </div>
     </main>

@@ -3,6 +3,7 @@ import type {
   GenerateHairstylesRequest,
   GenerateHairstylesResponse,
   HairstyleResult,
+  SceneType,
   UploadResponse
 } from "../types/api";
 
@@ -11,14 +12,34 @@ type MockOptions = {
   fail?: boolean;
 };
 
-const STYLE_NAMES: Record<Gender, string[]> = {
-  female: ["空气感锁骨发", "法式层次卷", "柔雾短波波"],
-  male: ["自然纹理短发", "轻商务侧分", "蓬松前刺"]
+const STYLE_NAMES: Record<Gender, Record<SceneType, string[]>> = {
+  female: {
+    daily: ["空气感锁骨发", "自然内扣中长发", "轻薄八字刘海长发"],
+    work: ["低层次职场锁骨发", "侧分柔顺中长发", "知性低马尾造型"],
+    date: ["法式层次卷", "慵懒空气卷长发", "温柔半扎发"],
+    party: ["柔雾短波波", "复古大波浪", "精致高颅顶卷发"]
+  },
+  male: {
+    daily: ["自然纹理短发", "低维护碎盖短发", "清爽圆寸渐变"],
+    work: ["轻商务侧分", "干净背头短发", "短侧分纹理发"],
+    date: ["蓬松前刺", "韩式纹理中短发", "微卷松弛短发"],
+    party: ["立体油头渐变", "凌感湿发纹理", "高颅顶飞机头"]
+  }
 };
 
-const STYLE_ADVICE: Record<Gender, string[]> = {
-  female: ["保留轻盈层次，整体自然耐看。", "增加自然弧度，让轮廓更柔和。", "提升精神感，适合换造型前预览。"],
-  male: ["顶部保留纹理，整体清爽自然。", "适合通勤和日常场景，低调成熟。", "拉高头顶比例，让整体更精神。"]
+const STYLE_ADVICE: Record<Gender, Record<SceneType, string[]>> = {
+  female: {
+    daily: ["轻盈自然，适合日常出门和通勤。", "干净耐看，日常打理成本低。", "修饰额头和颧骨，整体温柔不夸张。"],
+    work: ["利落专业，适合办公室和会议。", "显得稳重清爽，适合通勤和面试。", "简洁干练，保留女性柔和感。"],
+    date: ["温柔有氛围，适合约会和近距离拍照。", "增加亲和力，画面更柔软。", "甜美但不过度，适合晚餐和出游。"],
+    party: ["更上镜，适合聚会拍照和轻造型。", "造型感更强，适合晚宴和派对。", "提升头包脸比例，拍照更有存在感。"]
+  },
+  male: {
+    daily: ["清爽自然，适合日常出门。", "不需要强造型，日常更随性。", "简单利落，适合想减少打理的人。"],
+    work: ["低调成熟，适合通勤和商务场合。", "更专业正式，适合会议和面试。", "保持精神感，不显得过度造型。"],
+    date: ["更年轻有精神，适合约会氛围。", "柔和亲近，适合自然风格。", "降低距离感，看起来更轻松。"],
+    party: ["造型感更强，适合聚会拍照。", "更时髦醒目，适合夜间聚会。", "提升轮廓存在感，上镜更精神。"]
+  }
 };
 
 function delay(ms: number): Promise<void> {
@@ -81,8 +102,8 @@ export async function generateHairstylesMock(
   request: GenerateHairstylesRequest,
   options?: MockOptions
 ): Promise<GenerateHairstylesResponse> {
-  const names = STYLE_NAMES[request.gender];
-  const advice = STYLE_ADVICE[request.gender];
+  const names = STYLE_NAMES[request.gender][request.scene];
+  const advice = STYLE_ADVICE[request.gender][request.scene];
   const results: HairstyleResult[] = names.map((name, index) => ({
     styleId: `${request.gender}-${request.scene}-00${index + 1}`,
     name,

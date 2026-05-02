@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { createArkClient } from "../_lib/ark.js";
 import { buildHairstylePrompts } from "../_lib/hairstyles.js";
 import { json, jsonError, logApiError, mapErrorCode, messageForErrorCode } from "../_lib/http.js";
@@ -36,7 +38,8 @@ function parseRequest(body: unknown): GenerateHairstylesRequest | undefined {
   return {
     imageUrl: maybeBody.imageUrl,
     gender: maybeBody.gender,
-    scene
+    scene,
+    variationSeed: maybeBody.variationSeed || randomUUID()
   };
 }
 
