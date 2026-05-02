@@ -74,9 +74,7 @@ export default async function handler(request: VercelRequestLike, response: Verc
     const { client, imageModel } = createArkClient();
     const prompts = buildHairstylePrompts(body);
 
-    const results: HairstyleResult[] = [];
-
-    for (const prompt of prompts) {
+    const results = await Promise.all(prompts.map(async (prompt): Promise<HairstyleResult> => {
       const imageResponse = await generateImageFromReference(client, {
         image: body.imageUrl,
         model: imageModel,
@@ -94,13 +92,13 @@ export default async function handler(request: VercelRequestLike, response: Verc
         throw new Error("ARK_RESPONSE_PARSE_ERROR");
       }
 
-      results.push({
+      return {
         styleId: prompt.styleId,
         name: prompt.name,
         advice: prompt.advice,
         imageUrl
-      });
-    }
+      };
+    }));
 
     json(response, 200, { results });
   } catch (error) {
